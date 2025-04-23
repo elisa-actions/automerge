@@ -1,0 +1,30 @@
+name: 'Automerge PR'
+description: 'Automerge PRs based on authors'
+inputs:
+  retry-max-attempts:
+    description: 'Maximum retry count for running review approve and merge'
+    required: false
+    default: 5
+    type: number
+  retry-base-delay:
+    description: 'Base delay for exponential backoff'
+    required: false
+    default: 3
+    type: number
+  retry-max-delay:
+    description: 'Max delay for exponential backoff'
+    required: false
+    default: 60
+    type: number
+runs:
+  using: "composite"
+  steps:
+    - name: Approve and merge PR
+      run: ${{ github.action_path }}/approve-and-merge.sh
+      shell: bash
+      env:
+        PR_URL: ${{ github.event.pull_request.html_url }}
+        GH_TOKEN: ${{ github.token }}
+        INPUT_RETRY_MAX_ATTEMPTS: ${{ inputs.retry-max-attempts }}
+        INPUT_RETRY_BASE_DELAY: ${{ inputs.retry-base-delay }}
+        INPUT_RETRY_MAX_DELAY: ${{ inputs.retry-max-delay }}
