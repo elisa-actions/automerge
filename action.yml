@@ -1,6 +1,14 @@
 name: 'Automerge PR'
 description: 'Automerge PRs based on authors'
 inputs:
+  github-app-id:
+    description: 'App id of Github app that has rights to merge PRs'
+    required: true
+    type: string
+  github-app-private-key:
+    description: 'Private key of Github app that has rights to merge PRs'
+    required: true
+    type: string
   retry-max-attempts:
     description: 'Maximum retry count for running review approve and merge'
     required: false
@@ -19,12 +27,18 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - uses: actions/create-github-app-token@v1
+      id: auth
+      with:
+        app-id: ${{ inputs.github-app-id }}
+        private-key: ${{ inputs.github-app-private-key }}
+
     - name: Approve and merge PR
       run: ${{ github.action_path }}/approve-and-merge.sh
       shell: bash
       env:
         PR_URL: ${{ github.event.pull_request.html_url }}
-        GH_TOKEN: ${{ github.token }}
         INPUT_RETRY_MAX_ATTEMPTS: ${{ inputs.retry-max-attempts }}
         INPUT_RETRY_BASE_DELAY: ${{ inputs.retry-base-delay }}
         INPUT_RETRY_MAX_DELAY: ${{ inputs.retry-max-delay }}
+        INPUT_TOKEN: ${{ steps.auth.outputs.token }}

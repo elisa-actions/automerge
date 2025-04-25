@@ -6,16 +6,23 @@ retry() {
   local attempt=1
   local delay=${INPUT_RETRY_BASE_DELAY}
 
+  if [[ "${GITHUB_API_URL}" == "https://api.github.com" ]]; then
+    GH_TOKEN=${INPUT_TOKEN}
+  else
+    GH_ENTERPRISE_TOKEN=${INPUT_TOKEN}
+  fi
+
   local cmd=("$@")
+
 
   until "${cmd[@]}"; do
     if (( attempt >= ${INPUT_RETRY_MAX_ATTEMPTS} || delay >= ${INPUT_RETRY_MAX_DELAY} )); then
-      echo "❌ [${cmd[*]}] failed after $attempt attempts or reached a delay of ${delay}s. No more retries."
+      echo "::error::[${cmd[*]}] failed after $attempt attempts or reached a delay of ${delay}s. No more retries."
 
       return 1
     fi
 
-    echo "⚠️  [${cmd[*]}] attempt $attempt failed. Retrying in ${delay}s…"
+    echo "::warning::[${cmd[*]}] attempt $attempt failed. Retrying in ${delay}s…"
     sleep "$delay"
 
     delay=$(( delay * 2 ))
@@ -28,4 +35,4 @@ retry() {
 }
 
 retry gh pr review --approve "$PR_URL"
-retry gh pr merge --auto --merge "$PR_URL"
+retry gh pr merge --delete-branch --auto --merge "$PR_URL"
