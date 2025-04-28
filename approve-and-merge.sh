@@ -7,9 +7,9 @@ retry() {
   local delay=${INPUT_RETRY_BASE_DELAY}
 
   if [[ "${GITHUB_API_URL}" == "https://api.github.com" ]]; then
-    GH_TOKEN=${INPUT_TOKEN}
+    export GH_TOKEN=${INPUT_TOKEN}
   else
-    GH_ENTERPRISE_TOKEN=${INPUT_TOKEN}
+    export GH_ENTERPRISE_TOKEN=${INPUT_TOKEN}
   fi
 
   local cmd=("$@")

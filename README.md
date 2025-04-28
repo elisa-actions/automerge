@@ -4,7 +4,7 @@ This action automatically approves and merges PRs. The use case for this is to a
 
 ## Prerequisites
 
-Create a Github App that has permissions for repository contents read/write and pull requests read/write. Save Github app ID to variables and private key to secrets.
+Create a PAT for a suitable use that can approve and merge pull requests. Save PAT to secrets.
 
 ## Usage
 
@@ -13,18 +13,16 @@ Create a Github App that has permissions for repository contents read/write and 
             runs-on: ubuntu-latest
             if: |
                 github.event.pull_request.user.login == 'dependabot[bot]' ||
-                github.event.pull_request.user.login == 'dops-sre'
+                github.event.pull_request.user.login == 'foobar'
             steps:
                 - name: Automerge dependabot and repo-updater PRs
                   uses: elisa-actions/automerge@v1
                   with:
-                    github-app-id: ${{ vars.AUTOMERGE_APP_ID }}
-                    github-app-private-key: ${{ secrets.AUTOMERGE_APP_PRIVATE_KEY }}
+                    github-token: ${{ secrets.VERY_SECRET_TOKEN }}
 
 ## Inputs
 
-- `github-app-id`: (Required) App ID for the Github app that has permissions to read/write contents and pull requests of repositories.
-- `github-app-private-key`: (Required) Private key of the Github app.
+- `github-token`: (Required) Github PAT to use for approving and merging pull requests.
 - `retry-max-attempts`: (Optional) Maximum attempts to retry in case PR approve or merge fails. Default 5.
 - `retry-base-delay`: (Optional) Base for delay between retries. Default 3.
 - `retry-max-delay`: (Optional) Maximum delay for a retry. Default 60.
