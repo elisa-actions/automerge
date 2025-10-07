@@ -1,25 +1,30 @@
-name: 'Automerge PR'
-description: 'Automerge PRs based on authors'
+name: "Automerge PR"
+description: "Automerge PRs based on authors"
 inputs:
   github-token:
-    description: 'Github PAT to use for automerge'
+    description: "Github PAT to use for automerge"
     required: true
     type: string
   retry-max-attempts:
-    description: 'Maximum retry count for running review approve and merge'
+    description: "Maximum retry count for running review approve and merge"
     required: false
     default: 5
     type: number
   retry-base-delay:
-    description: 'Base delay for exponential backoff'
+    description: "Base delay for exponential backoff"
     required: false
     default: 3
     type: number
   retry-max-delay:
-    description: 'Max delay for exponential backoff'
+    description: "Max delay for exponential backoff"
     required: false
     default: 60
     type: number
+  delete-branch:
+    description: "Delete branch after merge"
+    required: false
+    default: true
+    type: bool
 runs:
   using: "composite"
   steps:
@@ -32,3 +37,4 @@ runs:
         INPUT_RETRY_BASE_DELAY: ${{ inputs.retry-base-delay }}
         INPUT_RETRY_MAX_DELAY: ${{ inputs.retry-max-delay }}
         INPUT_TOKEN: ${{ inputs.github-token }}
+        INPUT_DELETE_BRANCH: ${{ inputs.delete-branch }}
