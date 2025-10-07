@@ -14,9 +14,8 @@ retry() {
 
   local cmd=("$@")
 
-
   until "${cmd[@]}"; do
-    if (( attempt >= ${INPUT_RETRY_MAX_ATTEMPTS} || delay >= ${INPUT_RETRY_MAX_DELAY} )); then
+    if ((attempt >= ${INPUT_RETRY_MAX_ATTEMPTS} || delay >= ${INPUT_RETRY_MAX_DELAY})); then
       echo "::error::[${cmd[*]}] failed after $attempt attempts or reached a delay of ${delay}s. No more retries."
 
       return 1
@@ -25,14 +24,20 @@ retry() {
     echo "::warning::[${cmd[*]}] attempt $attempt failed. Retrying in ${delay}s…"
     sleep "$delay"
 
-    delay=$(( delay * 2 ))
-    (( delay > ${INPUT_RETRY_MAX_DELAY} )) && delay=$${INPUT_RETRY_MAX_DELAY}
+    delay=$((delay * 2))
+    ((delay > ${INPUT_RETRY_MAX_DELAY})) && delay=$${INPUT_RETRY_MAX_DELAY}
 
-    (( attempt++ ))
+    ((attempt++))
   done
 
   echo "✅ [${cmd[*]}] succeeded."
 }
 
 retry gh pr review --approve "$PR_URL"
-retry gh pr merge --delete-branch --auto --merge "$PR_URL"
+
+DELETE_BRANCH_FLAG=""
+if [[ "${INPUT_DELETE_BRANCH}" == "true" ]]; then
+  DELETE_BRANCH_FLAG="--delete-branch"
+fi
+
+retry gh pr merge $DELETE_BRANCH_FLAG --auto --merge "$PR_URL"

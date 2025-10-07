@@ -26,3 +26,4 @@ Create a PAT for a suitable use that can approve and merge pull requests. Save P
 - `retry-max-attempts`: (Optional) Maximum attempts to retry in case PR approve or merge fails. Default 5.
 - `retry-base-delay`: (Optional) Base for delay between retries. Default 3.
 - `retry-max-delay`: (Optional) Maximum delay for a retry. Default 60.
+- `delete-branch`: (Optional) Delete branch after merge. Default true.
