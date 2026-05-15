@@ -25,6 +25,11 @@ inputs:
     required: false
     default: true
     type: bool
+  approve:
+    description: "Approve PR before merging"
+    required: false
+    default: true
+    type: bool
 runs:
   using: "composite"
   steps:
@@ -38,3 +43,4 @@ runs:
         INPUT_RETRY_MAX_DELAY: ${{ inputs.retry-max-delay }}
         INPUT_TOKEN: ${{ inputs.github-token }}
         INPUT_DELETE_BRANCH: ${{ inputs.delete-branch }}
+        INPUT_APPROVE: ${{ inputs.approve }}

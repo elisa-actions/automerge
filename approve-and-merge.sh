@@ -33,7 +33,9 @@ retry() {
   echo "✅ [${cmd[*]}] succeeded."
 }
 
-retry gh pr review --approve "$PR_URL"
+if [[ "${INPUT_APPROVE}" == "true" ]]; then
+  retry gh pr review --approve "$PR_URL"
+fi
 
 DELETE_BRANCH_FLAG=""
 if [[ "${INPUT_DELETE_BRANCH}" == "true" ]]; then
